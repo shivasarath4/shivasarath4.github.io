@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safeguarding Games Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #f0f0f0;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .game-card h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .game-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .game-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .game-section.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+        }
+
+        .flag-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: grab;
+            transition: transform 0.2s;
+            border-left: 5px solid #667eea;
+        }
+
+        .flag-item:active {
+            cursor: grabbing;
+        }
+
+        .drop-zone {
+            min-height: 100px;
+            border: 3px dashed #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+
+        .drop-zone.red { border-color: #dc3545; background: #ffe5e5; }
+        .drop-zone.yellow { border-color: #ffc107; background: #fff8e1; }
+        .drop-zone.green { border-color: #28a745; background: #e8f5e9; }
+
+        .drop-zone.drag-over {
+            background: #e3f2fd;
+            transform: scale(1.02);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+            color: white;
+            font-size: 0.9em;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .memory-card.flipped {
+            background: white;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+
+        .memory-card.matched {
+            background: #28a745;
+            color: white;
+            cursor: default;
+        }
+
+        .quiz-option {
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: #e3f2fd;
+            border-color: #667eea;
+        }
+
+        .quiz-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .quiz-option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 1.5em;
+            color: #667eea;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 2em;
+            color: #dc3545;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .story-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .choice-btn {
+            display: block;
+            width: 100%;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .choice-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .scenario-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 3px solid #ddd;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #ffc107;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .badge.earned {
+            background: #28a745;
+            color: white;
+        }
+
+        .tf-button {
+            width: 48%;
+            padding: 20px;
+            font-size: 1.2em;
+            margin: 5px 1%;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tf-true {
+            background: #28a745;
+            color: white;
+        }
+
+        .tf-false {
+            background: #dc3545;
+            color: white;
+        }
+
+        .tf-button:hover {
+            transform: scale(1.05);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 Safeguarding Games Hub</h1>
+        <p class="subtitle">Learn about safe sports environments through fun, interactive games!</p>
+
+        <div id="menu" class="game-grid">
+            <div class="game-card" onclick="showGame('game1')">
+                <h2>🎯 Flag Sorter</h2>
+                <p>Drag and drop scenarios into the correct flag categories. Test your speed and accuracy!</p>
+            </div>
+            <div class="game-card" onclick="showGame('game2')">
+                <h2>🃏 Scenario Matcher</h2>
+                <p>Match scenarios with their explanations in this memory card game.</p>
+            </div>
+            <div class="game-card" onclick="showGame('game3')">
+                <h2>📖 Choose Your Response</h2>
+                <p>Make the right decisions in interactive safeguarding scenarios.</p>
+            </div>
+            <div class="game-card" onclick="showGame('game4')">
+                <h2>🎓 Quiz Bowl</h2>
+                <p>Answer questions about safeguarding with increasing difficulty levels.</p>
+            </div>
+            <div class="game-card" onclick="showGame('game5')">
+                <h2>🔍 Spot the Difference</h2>
+                <p>Identify what makes one scenario safe and another unsafe.</p>
+            </div>
+            <div class="game-card" onclick="showGame('game6')">
+                <h2>👥 Role Reversal</h2>
+                <p>See scenarios from different perspectives and identify the flags.</p>
+            </div>
+            <div class="game-card" onclick="showGame('game7')">
+                <h2>🏅 Badge Collection</h2>
+                <p>Earn badges by mastering each safeguarding category!</p>
+            </div>
+            <div class="game-card" onclick="showGame('game8')">
+                <h2>⚡ True or False</h2>
+                <p>Quick-fire round! Judge behaviors as safe or unsafe.</p>
+            </div>
+        </div>
+
+        <!-- Game 1: Flag Sorter -->
+        <div id="game1" class="game-section">
+            <button class="back-btn" onclick="showMenu()">← Back to Menu</button>
+            <h2>🎯 Flag Sorter Challenge</h2>
+            <div class="score-display">Score: <span id="sorter-score">0</span> / 6</div>
+            <div class="timer">Time: <span id="sorter-time">0</span>s</div>
+            
+            <h3>Drag scenarios to the correct category:</h3>
+            <div id="scenarios-to-sort"></div>
+            
+            <h3 style="color: #dc3545; margin-top: 30px;">🚩 Red Flags (Must Report)</h3>
+            <div class="drop-zone red" data-category="red"></div>
+            
+            <h3 style="color: #ffc107;">⚠️ Yellow Flags (Warning)</h3>
+            <div class="drop-zone yellow" data-category="yellow"></div>
+            
+            <h3 style="color: #28a745;">✅ Green Flags (Safe)</h3>
+            <div class="drop-zone green" data-category="green"></div>
+            
+            <button class="btn" onclick="resetSorter()">Reset Game</button>
+        </div>
+
+        <!-- Game 2: Scenario Matcher -->
+        <div id="game2" class="game-section">
+            <button class="back-btn" onclick="showMenu()">← Back to Menu</button>
+            <h2>🃏 Scenario Matcher</h2>
+            <div class="score-display">Matches Found: <span id="matcher-score">0</span> / 6</div>
+            <p>Click cards to flip them. Match scenarios with their explanations!</p>
+            <div class="card-grid" id="memory-grid"></div>
+            <button class="btn" onclick="resetMatcher()">New Game</button>
+        </div>
+
+        <!-- Game 3: Choose Your Response -->
+        <div id="game3" class="game-section">
+            <button class="back-btn" onclick="showMenu()">← Back to Menu</button>
+            <h2>📖 Choose Your Response</h2>
+            <div class="score-display">Correct Decisions: <span id="story-score">0</span> / 3</div>
+            <div class="story-section" id="story-content"></div>
+            <div id="story-choices"></div>
+            <button class="btn" onclick="resetStory()">Start Over</button>
+        </div>
+
+        <!-- Game 4: Quiz Bowl -->
+        <div id="game4" class="game-section">
+            <button class="back-btn" onclick="showMenu()">← Back to Menu</button>
+            <h2>🎓 Safeguarding Quiz Bowl</h2>
+            <div class="score-display">Score: <span id="quiz-score">0</span> / 5</div>
+            <div id="quiz-question"></div>
+            <div id="quiz-options"></div>
+            <button class="btn" onclick="nextQuestion()">Next Question</button>
+        </div>
+
+        <!-- Game 5: Spot the Difference -->
+        <div id="game5" class="game-section">
+            <button class="back-btn" onclick="showMenu()">← Back to Menu</button>
+            <h2>🔍 Spot the Difference</h2>
+            <div class="score-display">Score: <span id="spot-score">0</span> / 3</div>
+            <p>Which scenario is unsafe and why?</p>
+            <div class="comparison-container" id="comparison-container"></div>
+            <div id="spot-feedback" class="feedback"></div>
+            <button class="btn" onclick="nextComparison()">Next Comparison</button>
+        </div>
+
+        <!-- Game 6: Role Reversal -->
+        <div id="game6" class="game-section">
+            <button class="back-btn" onclick="showMenu()">← Back to Menu</button>
+            <h2>👥 Role Reversal Simulator</h2>
+            <div class="score-display">Score: <span id="role-score">0</span> / 3</div>
+            <div id="role-scenario"></div>
+            <div id="role-options"></div>
+        </div>
+
+        <!-- Game 7: Badge Collection -->
+        <div id="game7" class="game-section">
+            <button class="back-btn" onclick="showMenu()">← Back to Menu</button>
+            <h2>🏅 Badge Collection</h2>
+            <p>Complete challenges to earn badges!</p>
+            <h3>Your Badges:</h3>
+            <div id="badge-display">
+                <span class="badge">🚩 Red Flag Expert</span>
+                <span class="badge">⚠️ Yellow Flag Spotter</span>
+                <span class="badge">✅ Green Flag Champion</span>
+                <span class="badge">🏆 Safeguarding Master</span>
+                <span class="badge">⚡ Speed Demon</span>
+                <span class="badge">🎯 Perfect Scorer</span>
+            </div>
+            <p style="margin-top: 20px;">Play other games to earn these badges! Earn all badges to become a Safeguarding Champion!</p>
+        </div>
+
+        <!-- Game 8: True or False -->
+        <div id="game8" class="game-section">
+            <button class="back-btn" onclick="showMenu()">← Back to Menu</button>
+            <h2>⚡ True or False Lightning Round</h2>
+            <div class="score-display">Score: <span id="tf-score">0</span> / 5</div>
+            <div class="timer">Time: <span id="tf-time">0</span>s</div>
+            <div id="tf-statement"></div>
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="tf-button tf-true" onclick="answerTF(true)">✓ SAFE</button>
+                <button class="tf-button tf-false" onclick="answerTF(false)">✗ UNSAFE</button>
+            </div>
+            <div id="tf-feedback" class="feedback"></div>
+            <button class="btn" onclick="resetTF()">New Round</button>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = {
+            red: [
+                { text: "A coach shouts hurtful insults every time a player makes a mistake", explanation: "Emotional abuse; not constructive" },
+                { text: "A teammate posts body-shaming photos on social media", explanation: "Bullying and cyber-bullying" },
+                { text: "A physiotherapist treats athlete alone behind closed doors", explanation: "Potential grooming risk" },
+                { text: "Senior player forces extra punishments and denies water breaks", explanation: "Physical abuse and neglect" },
+                { text: "Manager makes athlete compete while injured", explanation: "Neglect and lack of duty of care" },
+                { text: "Coach sends sexual or inappropriate messages", explanation: "Sexual harassment; must report" }
+            ],
+            yellow: [
+                { text: "Trainer sends late-night personal messages on social media", explanation: "Boundary concern" },
+                { text: "Manager buys expensive gifts only for one athlete", explanation: "Favouritism and special attention" },
+                { text: "Coach gives harsh feedback in front of team", explanation: "Harmful to psychological safety" },
+                { text: "Coach gives one athlete extra private sessions", explanation: "Unequal treatment; grooming risk" },
+                { text: "Teammates joke about each other uncomfortably", explanation: "Can become bullying" }
+            ],
+            green: [
+                { text: "Coach emphasizes effort and respect over winning", explanation: "Promotes positive values" },
+                { text: "Teammates support each other after mistakes", explanation: "Encourages resilience" },
+                { text: "Coach checks understanding and invites questions", explanation: "Good communication" },
+                { text: "Manager checks in privately with care", explanation: "Shows empathy and support" },
+                { text: "Coach addresses bullying to ensure respect", explanation: "Proactive safeguarding" }
+            ]
+        };
+
+        let currentGame = null;
+        let gameStates = {
+            sorter: { score: 0, startTime: null, timer: null },
+            matcher: { score: 0, flipped: [], matched: [] },
+            story: { score: 0, current: 0 },
+            quiz: { score: 0, current: 0, answered: false },
+            spot: { score: 0, current: 0 },
+            role: { score: 0, current: 0 },
+            tf: { score: 0, current: 0, startTime: null, timer: null }
+        };
+
+        function showGame(gameId) {
+            document.getElementById('menu').style.display = 'none';
+            document.querySelectorAll('.game-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(gameId).classList.add('active');
+            currentGame = gameId;
+            
+            if (gameId === 'game1') initSorter();
+            if (gameId === 'game2') initMatcher();
+            if (gameId === 'game3') initStory();
+            if (gameId === 'game4') initQuiz();
+            if (gameId === 'game5') initSpot();
+            if (gameId === 'game6') initRole();
+            if (gameId === 'game8') initTF();
+        }
+
+        function showMenu() {
+            document.getElementById('menu').style.display = 'grid';
+            document.querySelectorAll('.game-section').forEach(s => s.classList.remove('active'));
+            currentGame = null;
+        }
+
+        // Game 1: Flag Sorter
+        function initSorter() {
+            const container = document.getElementById('scenarios-to-sort');
+            container.innerHTML = '';
+            gameStates.sorter = { score: 0, startTime: Date.now(), timer: null };
+            
+            const allScenarios = [
+                ...scenarios.red.slice(0, 2).map(s => ({...s, category: 'red'})),
+                ...scenarios.yellow.slice(0, 2).map(s => ({...s, category: 'yellow'})),
+                ...scenarios.green.slice(0, 2).map(s => ({...s, category: 'green'}))
+            ].sort(() => Math.random() - 0.5);
+            
+            allScenarios.forEach((scenario, idx) => {
+                const div = document.createElement('div');
+                div.className = 'flag-item';
+                div.draggable = true;
+                div.dataset.category = scenario.category;
+                div.dataset.idx = idx;
+                div.textContent = scenario.text;
+                div.addEventListener('dragstart', handleDragStart);
+                container.appendChild(div);
+            });
+            
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.innerHTML = '<p style="color: #999;">Drop scenarios here</p>';
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+            
+            updateSorterScore();
+            startSorterTimer();
+        }
+
+        function handleDragStart(e) {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.dataset.category);
+            e.target.style.opacity = '0.5';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            const category = e.dataTransfer.getData('text/html');
+            const dropZone = e.currentTarget;
+            const item = document.querySelector('.flag-item[style*="opacity"]');
+            
+            if (item) {
+                item.style.opacity = '1';
+                if (category === dropZone.dataset.category) {
+                    dropZone.appendChild(item);
+                    item.draggable = false;
+                    item.style.cursor = 'default';
+                    item.style.background = '#d4edda';
+                    gameStates.sorter.score++;
+                    updateSorterScore();
+                    
+                    if (gameStates.sorter.score === 6) {
+                        clearInterval(gameStates.sorter.timer);
+                        alert('Congratulations! You sorted all scenarios correctly!');
+                    }
+                } else {
+                    item.style.background = '#f8d7da';
+                    setTimeout(() => {
+                        item.style.background = '#f8f9fa';
+                    }, 1000);
+                }
+            }
+        }
+
+        function updateSorterScore() {
+            document.getElementById('sorter-score').textContent = gameStates.sorter.score;
+        }
+
+        function startSorterTimer() {
+            gameStates.sorter.timer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - gameStates.sorter.startTime) / 1000);
+                document.getElementById('sorter-time').textContent = elapsed;
+            }, 1000);
+        }
+
+        function resetSorter() {
+            clearInterval(gameStates.sorter.timer);
+            initSorter();
+        }
+
+        // Game 2: Scenario Matcher
+        function initMatcher() {
+            gameStates.matcher = { score: 0, flipped: [], matched: [] };
+            const cards = [];
+            
+            scenarios.red.slice(0, 3).forEach((s, i) => {
+                cards.push({ id: `r${i}`, type: 'scenario', text: s.text, pair: `r${i}` });
+                cards.push({ id: `r${i}`, type: 'explanation', text: s.explanation, pair: `r${i}` });
+            });
+            
+            cards.sort(() => Math.random() - 0.5);
+            
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+            
+            cards.forEach((card, idx) => {
+                const div = document.createElement('div');
+                div.className = 'memory-card';
+                div.dataset.id = card.id;
+                div.dataset.idx = idx;
+                div.innerHTML = '<div style="display:none;">' + card.text + '</div><div>?</div>';
+                div.addEventListener('click', () => flipCard(idx, card));
+                grid.appendChild(div);
+            });
+            
+            updateMatcherScore();
+        }
+
+        function flipCard(idx, card) {
+            const cardEl = document.querySelector(`.memory-card[data-idx="${idx}"]`);
+            if (cardEl.classList.contains('matched') || cardEl.classList.contains('flipped')) return;
+            if (gameStates.matcher.flipped.length >= 2) return;
+            
+            cardEl.classList.add('flipped');
+            cardEl.children[0].style.display = 'block';
+            cardEl.children[1].style.display = 'none';
+            gameStates.matcher.flipped.push({ idx, id: card.id });
+            
+            if (gameStates.matcher.flipped.length === 2) {
+                setTimeout(checkMatch, 1000);
+            }
+        }
+
+        function checkMatch() {
+            const [first, second] = gameStates.matcher.flipped;
+            const firstEl = document.querySelector(`.memory-card[data-idx="${first.idx}"]`);
+            const secondEl = document.querySelector(`.memory-card[data-idx="${second.idx}"]`);
+            
+            if (first.id === second.id) {
+                firstEl.classList.add('matched');
+                secondEl.classList.add('matched');
+                gameStates.matcher.score++;
+                updateMatcherScore();
+                
+                if (gameStates.matcher.score === 3) {
+                    setTimeout(() => alert('Excellent! You matched all pairs!'), 500);
+                }
+            } else {
+                firstEl.classList.remove('flipped');
+                secondEl.classList.remove('flipped');
+                firstEl.children[0].style.display = 'none';
+                firstEl.children[1].style.display = 'block';
+                secondEl.children[0].style.display = 'none';
+                secondEl.children[1].style.display = 'block';
+            }
+            
+            gameStates.matcher.flipped = [];
+        }
+
+        function updateMatcherScore() {
+            document.getElementById('matcher-score').textContent = gameStates.matcher.score;
+        }
+
+        function resetMatcher() {
+            initMatcher();
+        }
+
+        // Game 3: Choose Your Response
+        const storyScenarios = [
+            {
+                text: "You notice your coach sending late-night messages to one of your teammates on social media, commenting on their appearance.",
+                choices: [
+                    { text: "Report immediately to team manager", correct: false, feedback: "While reporting is good, this is a yellow flag that needs careful monitoring first. Talk to the teammate and observe the situation." },
+                    { text: "Talk to your teammate and suggest they set boundaries", correct: true, feedback: "Correct! This is a yellow flag - a boundary concern. Support your teammate and encourage them to set appropriate boundaries." },
+                    { text: "Ignore it - it's probably nothing", correct: false, feedback: "Never ignore warning signs. Yellow flags can escalate if not addressed." }
+                ]
+            },
+            {
+                text: "During training, your coach publicly humiliates a player who made a mistake, calling them 'useless' in front of everyone.",
+                choices: [
+                    { text: "Report this behavior to a safeguarding officer", correct: true, feedback: "Absolutely correct! This is a red flag - emotional abuse. It must be reported immediately." },
+                    { text: "Tell the coach privately that it wasn't nice", correct: false, feedback: "While speaking up is important, this is a red flag that requires official reporting, not just a private conversation." },
+                    { text: "Support the player afterward", correct: false, feedback: "Supporting the player is important, but this emotional abuse is a red flag that must be reported." }
+                ]
+            },
+            {
+                text: "After a tough loss, you see teammates encouraging each other, saying 'We'll get them next time! Great effort today!'",
+                choices: [
+                    { text: "Join in and support your teammates", correct: true, feedback: "Perfect! This is a green flag - teammates supporting each other. This creates a healthy team environment." },
+                    { text: "Stay quiet - they don't need you", correct: false, feedback: "Positive support helps build team resilience. Join in the encouragement!" },
+                    { text: "Report this to the coach", correct: false, feedback: "This is positive behavior (green flag) that should be encouraged, not reported!" }
+                ]
+            }
+        ];
+
+        function initStory() {
+            gameStates.story = { score: 0, current: 0 };
+            updateStoryScore();
+            showStoryScenario();
+        }
+
+        function showStoryScenario() {
+            if (gameStates.story.current >= storyScenarios.length) {
+                document.getElementById('story-content').innerHTML = '<h3>🎉 Story Complete!</h3><p>You made informed decisions on safeguarding scenarios.</p>';
+                document.getElementById('story-choices').innerHTML = '';
+                return;
+            }
+            
+            const scenario = storyScenarios[gameStates.story.current];
+            document.getElementById('story-content').innerHTML = `
+                <h3>Scenario ${gameStates.story.current + 1}</h3>
+                <p style="font-size: 1.1em; line-height: 1.6;">${scenario.text}</p>
+                <p style="margin-top: 15px;"><strong>What should you do?</strong></p>
+            `;
+            
+            const choicesDiv = document.getElementById('story-choices');
+            choicesDiv.innerHTML = '';
+            
+            scenario.choices.forEach((choice, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice.text;
+                btn.onclick = () => selectStoryChoice(choice);
+                choicesDiv.appendChild(btn);
+            });
+        }
+
+        function selectStoryChoice(choice) {
+            if (choice.correct) {
+                gameStates.story.score++;
+                updateStoryScore();
+            }
+            
+            alert((choice.correct ? '✅ Correct! ' : '❌ Not quite. ') + choice.feedback);
+            gameStates.story.current++;
+            showStoryScenario();
+        }
+
+        function updateStoryScore() {
+            document.getElementById('story-score').textContent = gameStates.story.score;
+        }
+
+        function resetStory() {
+            initStory();
+        }
+
+        // Game 4: Quiz Bowl
+        const quizQuestions = [
+            {
+                question: "What type of flag is it when a coach shouts hurtful insults at players?",
+                options: ["Green Flag - Motivation", "Yellow Flag - Warning", "Red Flag - Must Report", "Not a flag issue"],
+                correct: 2
+            },
+            {
+                question: "A manager gives expensive gifts to only one athlete. This is:",
+                options: ["Green Flag - Showing appreciation", "Yellow Flag - Favouritism concern", "Red Flag - Immediate danger", "Completely fine"],
+                correct: 1
+            },
+            {
+                question: "What should you do if teammates support each other after mistakes?",
+                options: ["Report it as concerning", "Recognize it as positive behavior", "Ignore it", "Tell them to stop"],
+                correct: 1
+            },
+            {
+                question: "A coach sends sexual messages to an athlete. This is:",
+                options: ["Yellow Flag - Monitor situation", "Red Flag - Report immediately", "Green Flag - Building relationship", "Personal matter"],
+                correct: 1
+            },
+            {
+                question: "Which behavior promotes psychological safety?",
+                options: ["Public harsh criticism", "Coach checks understanding and invites questions", "Isolation of players", "Denying water breaks"],
+                correct: 1
+            }
+        ];
+
+        function initQuiz() {
+            gameStates.quiz = { score: 0, current: 0, answered: false };
+            updateQuizScore();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (gameStates.quiz.current >= quizQuestions.length) {
+                document.getElementById('quiz-question').innerHTML = '<h3>🎉 Quiz Complete!</h3><p>Great job testing your knowledge!</p>';
+                document.getElementById('quiz-options').innerHTML = '';
+                return;
+            }
+            
+            const q = quizQuestions[gameStates.quiz.current];
+            document.getElementById('quiz-question').innerHTML = `
+                <h3>Question ${gameStates.quiz.current + 1} of ${quizQuestions.length}</h3>
+                <p style="font-size: 1.2em; margin: 20px 0;">${q.question}</p>
+            `;
+            
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+            gameStates.quiz.answered = false;
+            
+            q.options.forEach((option, idx) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                div.textContent = option;
+                div.onclick = () => selectAnswer(idx, q.correct);
+                optionsDiv.appendChild(div);
+            });
+        }
+
+        function selectAnswer(selected, correct) {
+            if (gameStates.quiz.answered) return;
+            gameStates.quiz.answered = true;
+            
+            const options = document.querySelectorAll('.quiz-option');
+            options[selected].classList.add(selected === correct ? 'correct' : 'incorrect');
+            options[correct].classList.add('correct');
+            
+            if (selected === correct) {
+                gameStates.quiz.score++;
+                updateQuizScore();
+            }
+        }
+
+        function updateQuizScore() {
+            document.getElementById('quiz-score').textContent = gameStates.quiz.score;
+        }
+
+        function nextQuestion() {
+            if (!gameStates.quiz.answered && gameStates.quiz.current > 0) return;
+            gameStates.quiz.current++;
+            showQuestion();
+        }
+
+        // Game 5: Spot the Difference
+        const comparisons = [
+            {
+                safe: "A coach gives constructive feedback privately: 'Let's work on your technique together after practice.'",
+                unsafe: "A coach embarrasses a player publicly: 'That was terrible! Everyone saw how badly you messed up!'",
+                answer: "The unsafe scenario involves public humiliation (yellow/red flag), while the safe one shows private, constructive support (green flag)."
+            },
+            {
+                safe: "A physiotherapist treats an athlete in the training room with the door open and others nearby.",
+                unsafe: "A physiotherapist insists on treating an athlete alone behind closed doors for 'privacy.'",
+                answer: "The unsafe scenario creates isolation and grooming risk (red flag), while the safe one maintains transparency and safety (green flag)."
+            },
+            {
+                safe: "Teammates celebrate together and encourage each other during tough training.",
+                unsafe: "Senior players force younger teammates to do extra punishments and deny them water breaks.",
+                answer: "The unsafe scenario shows abuse of power and physical neglect (red flag), while the safe one demonstrates team support (green flag)."
+            }
+        ];
+
+        function initSpot() {
+            gameStates.spot = { score: 0, current: 0 };
+            updateSpotScore();
+            showComparison();
+        }
+
+        function showComparison() {
+            if (gameStates.spot.current >= comparisons.length) {
+                document.getElementById('comparison-container').innerHTML = '<div style="grid-column: 1/-1; text-align: center;"><h3>🎉 All Comparisons Complete!</h3></div>';
+                return;
+            }
+            
+            const comp = comparisons[gameStates.spot.current];
+            document.getElementById('comparison-container').innerHTML = `
+                <div class="scenario-box" onclick="checkSpotAnswer(false)" style="cursor: pointer;">
+                    <h4 style="color: #28a745;">Scenario A</h4>
+                    <p>${comp.safe}</p>
+                </div>
+                <div class="scenario-box" onclick="checkSpotAnswer(true)" style="cursor: pointer;">
+                    <h4 style="color: #dc3545;">Scenario B</h4>
+                    <p>${comp.unsafe}</p>
+                </div>
+            `;
+            
+            document.getElementById('spot-feedback').classList.remove('show', 'correct', 'incorrect');
+        }
+
+        function checkSpotAnswer(selectedUnsafe) {
+            const feedback = document.getElementById('spot-feedback');
+            const comp = comparisons[gameStates.spot.current];
+            
+            if (selectedUnsafe) {
+                gameStates.spot.score++;
+                updateSpotScore();
+                feedback.className = 'feedback show correct';
+                feedback.textContent = '✅ Correct! ' + comp.answer;
+            } else {
+                feedback.className = 'feedback show incorrect';
+                feedback.textContent = '❌ Not quite. ' + comp.answer;
+            }
+        }
+
+        function updateSpotScore() {
+            document.getElementById('spot-score').textContent = gameStates.spot.score;
+        }
+
+        function nextComparison() {
+            gameStates.spot.current++;
+            showComparison();
+        }
+
+        // Game 6: Role Reversal
+        const roleScenarios = [
+            {
+                scenario: "A coach regularly gives one athlete extra private training sessions, saying they have 'special potential.'",
+                perspectives: [
+                    { role: "As the Athlete receiving attention", answer: "Yellow Flag - While extra training sounds good, this could be favoritism or grooming risk, especially if it involves isolation." },
+                    { role: "As a Teammate watching this", answer: "Yellow Flag - This shows unequal treatment and could create division in the team." },
+                    { role: "As a Parent of the athlete", answer: "Yellow Flag - You should ask about these sessions, ensure they're appropriate, and check if other athletes have similar opportunities." }
+                ]
+            },
+            {
+                scenario: "A senior player forces younger teammates to do extra punishments and denies them water breaks to 'toughen them up.'",
+                perspectives: [
+                    { role: "As the Younger Athlete", answer: "Red Flag - This is abuse of power, physical abuse, and neglect. You should report this immediately." },
+                    { role: "As Another Senior Player", answer: "Red Flag - You must intervene and report this behavior. It's your responsibility to protect younger teammates." },
+                    { role: "As the Coach", answer: "Red Flag - This requires immediate action. The senior player must be stopped and educated about appropriate leadership." }
+                ]
+            },
+            {
+                scenario: "After a tough loss, the coach reminds the team that effort, teamwork, and respect are more important than just winning.",
+                perspectives: [
+                    { role: "As an Athlete on the team", answer: "Green Flag - This promotes positive values and helps maintain perspective on what truly matters in sports." },
+                    { role: "As a Parent watching", answer: "Green Flag - This coach prioritizes character development and healthy attitudes toward competition." },
+                    { role: "As a Team Official", answer: "Green Flag - This demonstrates good coaching that focuses on long-term athlete development." }
+                ]
+            }
+        ];
+
+        function initRole() {
+            gameStates.role = { score: 0, current: 0 };
+            updateRoleScore();
+            showRoleScenario();
+        }
+
+        function showRoleScenario() {
+            if (gameStates.role.current >= roleScenarios.length) {
+                document.getElementById('role-scenario').innerHTML = '<h3>🎉 Role Reversal Complete!</h3><p>You explored multiple perspectives on safeguarding!</p>';
+                document.getElementById('role-options').innerHTML = '';
+                return;
+            }
+            
+            const rs = roleScenarios[gameStates.role.current];
+            document.getElementById('role-scenario').innerHTML = `
+                <h3>Scenario ${gameStates.role.current + 1}</h3>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <p style="font-size: 1.1em;">${rs.scenario}</p>
+                </div>
+                <p><strong>Click a perspective to see how to identify this scenario:</strong></p>
+            `;
+            
+            const optionsDiv = document.getElementById('role-options');
+            optionsDiv.innerHTML = '';
+            
+            rs.perspectives.forEach((persp, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = persp.role;
+                btn.onclick = () => showRolePerspective(persp);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function showRolePerspective(persp) {
+            alert(persp.role + ':\n\n' + persp.answer);
+            gameStates.role.score++;
+            updateRoleScore();
+        }
+
+        function updateRoleScore() {
+            document.getElementById('role-score').textContent = gameStates.role.score;
+        }
+
+        // Game 8: True or False
+        const tfStatements = [
+            { statement: "It's okay for a coach to send late-night personal messages to athletes on social media.", safe: false },
+            { statement: "Teammates should support each other even when mistakes are made.", safe: true },
+            { statement: "A physiotherapist should always treat athletes alone behind closed doors for privacy.", safe: false },
+            { statement: "Coaches should check that everyone understands the training plan.", safe: true },
+            { statement: "Senior players can deny water breaks to younger players to make them tougher.", safe: false },
+            { statement: "A coach emphasizing effort and respect over winning is creating a positive environment.", safe: true },
+            { statement: "Public harsh criticism motivates athletes to perform better.", safe: false },
+            { statement: "It's fine for a manager to buy expensive gifts for just one athlete.", safe: false }
+        ];
+
+        function initTF() {
+            gameStates.tf = { score: 0, current: 0, startTime: Date.now(), timer: null };
+            updateTFScore();
+            showTFStatement();
+            startTFTimer();
+        }
+
+        function showTFStatement() {
+            if (gameStates.tf.current >= 5) {
+                clearInterval(gameStates.tf.timer);
+                document.getElementById('tf-statement').innerHTML = '<h3 style="text-align: center; color: #28a745;">🎉 Lightning Round Complete!</h3>';
+                document.querySelectorAll('.tf-button').forEach(btn => btn.disabled = true);
+                return;
+            }
+            
+            const stmt = tfStatements[gameStates.tf.current];
+            document.getElementById('tf-statement').innerHTML = `
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 10px; margin: 20px 0; text-align: center;">
+                    <h3>Statement ${gameStates.tf.current + 1} of 5</h3>
+                    <p style="font-size: 1.3em; margin: 20px 0; font-weight: bold;">${stmt.statement}</p>
+                    <p style="color: #666;">Is this behavior SAFE or UNSAFE?</p>
+                </div>
+            `;
+            
+            document.getElementById('tf-feedback').classList.remove('show', 'correct', 'incorrect');
+            document.querySelectorAll('.tf-button').forEach(btn => btn.disabled = false);
+        }
+
+        function answerTF(userSaysSafe) {
+            const stmt = tfStatements[gameStates.tf.current];
+            const correct = userSaysSafe === stmt.safe;
+            const feedback = document.getElementById('tf-feedback');
+            
+            if (correct) {
+                gameStates.tf.score++;
+                updateTFScore();
+                feedback.className = 'feedback show correct';
+                feedback.innerHTML = '<strong>✅ Correct!</strong> ' + (stmt.safe ? 'This is safe, positive behavior.' : 'This is unsafe and should be addressed.');
+            } else {
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = '<strong>❌ Incorrect!</strong> ' + (stmt.safe ? 'This is actually a safe, positive behavior that should be encouraged.' : 'This is an unsafe behavior that needs to be addressed or reported.');
+            }
+            
+            document.querySelectorAll('.tf-button').forEach(btn => btn.disabled = true);
+            
+            setTimeout(() => {
+                gameStates.tf.current++;
+                showTFStatement();
+            }, 2500);
+        }
+
+        function updateTFScore() {
+            document.getElementById('tf-score').textContent = gameStates.tf.score;
+        }
+
+        function startTFTimer() {
+            gameStates.tf.timer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - gameStates.tf.startTime) / 1000);
+                document.getElementById('tf-time').textContent = elapsed;
+            }, 1000);
+        }
+
+        function resetTF() {
+            clearInterval(gameStates.tf.timer);
+            initTF();
+        }
+    </script>
+</body>
+</html>

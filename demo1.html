@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Safeguarding Games Demo</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 20px;
+  }
+  h2 {
+    margin-top: 40px;
+    color: #333;
+  }
+  .game {
+    background: #fff;
+    padding: 16px;
+    margin-top: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  button {
+    margin: 6px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .red { background:#e74c3c; color:#fff; }
+  .yellow { background:#f1c40f; }
+  .green { background:#2ecc71; color:#fff; }
+  .option { background:#3498db; color:#fff; }
+  .result {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1>🏅 Safeguarding Learning Games (Prototype)</h1>
+
+<!-- 1. FLAG IT FAST -->
+<h2>1️⃣ Flag It Fast</h2>
+<div class="game">
+  <p id="flagScenario">
+    A coach sends late-night personal messages to an athlete.
+  </p>
+  <button class="red" onclick="flagAnswer('red')">Red</button>
+  <button class="yellow" onclick="flagAnswer('yellow')">Yellow</button>
+  <button class="green" onclick="flagAnswer('green')">Green</button>
+  <div id="flagResult" class="result"></div>
+</div>
+
+<!-- 2. WHAT HAPPENS NEXT -->
+<h2>2️⃣ What Happens Next?</h2>
+<div class="game">
+  <p>
+    Your physiotherapist insists on treating you alone behind closed doors.
+    What do you do?
+  </p>
+  <button class="option" onclick="nextOutcome('ignore')">Ignore it</button>
+  <button class="option" onclick="nextOutcome('report')">Report it</button>
+  <button class="option" onclick="nextOutcome('tell')">Tell a teammate</button>
+  <div id="nextResult" class="result"></div>
+</div>
+
+<!-- 3. SPOT THE BOUNDARY -->
+<h2>3️⃣ Spot the Boundary</h2>
+<div class="game">
+  <p id="boundaryText">
+    A coach gives extra training sessions to one athlete.
+  </p>
+  <button onclick="boundary('ok')">Still OK</button>
+  <button onclick="boundary('warning')">Crossing a line</button>
+  <button onclick="boundary('unsafe')">Unsafe</button>
+  <div id="boundaryResult" class="result"></div>
+</div>
+
+<!-- 4. MATCH THE REASON -->
+<h2>4️⃣ Match the Reason</h2>
+<div class="game">
+  <p>
+    Senior player forces extra punishments and denies water breaks.
+  </p>
+  <select id="reasonSelect">
+    <option value="">Select reason</option>
+    <option value="abuse">Abuse of power</option>
+    <option value="communication">Poor communication</option>
+    <option value="motivation">Motivation technique</option>
+  </select>
+  <button onclick="matchReason()">Submit</button>
+  <div id="reasonResult" class="result"></div>
+</div>
+
+<!-- 5. BUILD A SAFE TEAM -->
+<h2>5️⃣ Build a Safe Team</h2>
+<div class="game">
+  <p>
+    An athlete is injured before an important match. What do you do?
+  </p>
+  <button onclick="teamDecision('rest')">Let them rest</button>
+  <button onclick="teamDecision('force')">Force them to play</button>
+  <div id="teamResult" class="result"></div>
+</div>
+
+<!-- 6. WOULD YOU SPEAK UP -->
+<h2>6️⃣ Would You Speak Up?</h2>
+<div class="game">
+  <p>
+    Teammates joke about another athlete’s appearance, making them uncomfortable.
+  </p>
+  <button onclick="speak('yes')">Yes, I’d speak up</button>
+  <button onclick="speak('no')">No, I’d stay quiet</button>
+  <div id="speakResult" class="result"></div>
+</div>
+
+<!-- 7. RED FLAG OR MYTH -->
+<h2>7️⃣ Red Flag or Myth?</h2>
+<div class="game">
+  <p>
+    “Yelling at athletes is fine if it makes them tougher.”
+  </p>
+  <button onclick="myth('red')">Red Flag</button>
+  <button onclick="myth('myth')">Just a Myth</button>
+  <div id="mythResult" class="result"></div>
+</div>
+
+<script>
+  function flagAnswer(answer) {
+    document.getElementById("flagResult").innerText =
+      answer === "yellow"
+        ? "✅ Correct: This is a Yellow Flag (boundary concern)."
+        : "❌ Incorrect. This behaviour can cross boundaries.";
+  }
+
+  function nextOutcome(choice) {
+    const text = {
+      ignore: "❌ Risk increases. Unsafe behaviour may continue.",
+      report: "✅ Correct. This behaviour should be reported.",
+      tell: "⚠️ Good first step, but reporting is important."
+    };
+    document.getElementById("nextResult").innerText = text[choice];
+  }
+
+  function boundary(choice) {
+    document.getElementById("boundaryResult").innerText =
+      choice === "warning"
+        ? "✅ Correct. Extra attention can cross boundaries."
+        : "⚠️ Look closer at context and isolation.";
+  }
+
+  function matchReason() {
+    const val = document.getElementById("reasonSelect").value;
+    document.getElementById("reasonResult").innerText =
+      val === "abuse"
+        ? "✅ Correct. This is abuse of power."
+        : "❌ Incorrect. This behaviour is harmful.";
+  }
+
+  function teamDecision(choice) {
+    document.getElementById("teamResult").innerText =
+      choice === "rest"
+        ? "✅ Green Flag. Athlete safety comes first."
+        : "❌ Red Flag. Ignoring injury is neglect.";
+  }
+
+  function speak(choice) {
+    document.getElementById("speakResult").innerText =
+      choice === "yes"
+        ? "✅ Speaking up helps prevent bullying."
+        : "⚠️ Silence allows harm to continue.";
+  }
+
+  function myth(choice) {
+    document.getElementById("mythResult").innerText =
+      choice === "red"
+        ? "✅ Correct. Emotional abuse is not motivation."
+        : "❌ Incorrect. This belief is dangerous.";
+  }
+</script>
+
+</body>
+</html>
